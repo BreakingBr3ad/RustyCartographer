@@ -28,13 +28,8 @@ def generateMap(size,seed,staging,barren):
 
 def writetoFile(keyData,size,seed):
     filename = f"{size}_{seed}"
-    #print (filename)
-    #print (keyData)
     with open(f'{filename}.json', 'w', encoding='utf-8') as f:
         json.dump(keyData, f, ensure_ascii=False, indent=4)
-    #f = open(f"{filename}.txt","w")
-    #f.write(str(keyData))
-    #f.close
 
 def getMap(size,seed,staging,barren):
     
@@ -65,8 +60,6 @@ def getMapbyID(mapID):
         return imageKey
 
 def getServerSeed(url,port):
-    #print (type(url))
-    #print(type(port))
     serverAddr = (url,port)
     serverResponse = a2s.rules(serverAddr)
     #print (serverResponse)
@@ -75,7 +68,6 @@ def getServerSeed(url,port):
     server.append(serverResponse["world.size"])
     server.append(serverResponse["world.seed"])
     sizeseed = [server[2],server[3]]
-    #print (sizeseed)
     getRequest = requests.get(rustMapLink+str(serverResponse["world.seed"])+"/"+str(serverResponse["world.size"])+"?staging=false&barren=false", headers = Header)
     if getRequest.status_code != 404:
         imageKey = getRequest.json()
@@ -88,7 +80,6 @@ def getServerSeed(url,port):
         return sizeseed
     serverAddr=tuple()
     sizeseed.clear()
-    #print (sizeseed)
 
 def checkMonuments(size,seed):
     with open(f'{size}_{seed}.json', 'r') as monumentslist:
@@ -101,7 +92,6 @@ def checkMonuments(size,seed):
     monumentsDict.dict['imageIconUrl'] = mapIconImg
     monumentsDict.dict['url'] = mapPage
     for i in obj['monuments']:
-        #print (i['monument'])
         for j in monumentsDict.monuments:
             if i['monument'] == j:
                 monumentsDict.dict[f'{j}'] = '✅'
@@ -163,8 +153,6 @@ async def on_message(message):
                 #print ("FUCKER",mapImage)
                 await message.add_reaction('🗺️')
                 if 'url' not in mapImage:
-                    print("FUCKER2")
-                    #await message.channel.send("Map is still generating! Please allow around 5 minutes.")
                     embed=mapGenErrorEmbed()
                     await message.channel.send(embed=embed)
                 else:
@@ -249,8 +237,6 @@ async def on_message(message):
         elif 'server'  in message.content.lower():
             if ':' in message.content.lower():
                 ColonMsgText = splitMsgText[1].split(':')
-                #print (ColonMsgText[0])
-                #print (ColonMsgText[1])
                 url = ColonMsgText[0]
                 port = ColonMsgText[1]
             else:
@@ -264,19 +250,13 @@ async def on_message(message):
                 embed.set_footer(text="Powered by Rustmaps.com")
                 embed.set_author(name = "Creator: Bread", icon_url="https://i.imgur.com/cUafKbf.png")
                 await message.channel.send(embed=embed)
-                #await message.channel.edit(embed=embedNew)
             else:
-                #print (serverSizeSeed)
                 embed = sendEmbed(serverSizeSeed[0],serverSizeSeed[1])
                 await message.channel.send(embed=embed)
             server.clear()
             serverSizeSeed.clear()
-            #print("In server elif:",server)
-            #print("In server elif:",serverSizeSeed)
         else: 
             embed=helpEmbed()
             await message.channel.send(embed=embed)
 
 client.run(discordToken)
-
-#https://discord.com/api/oauth2/authorize?client_id=904509082818445322&permissions=68608&scope=bot
